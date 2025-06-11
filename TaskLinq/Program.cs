@@ -22,10 +22,10 @@ namespace TaskLinq
 
             // 2- Retrieve all orders processed by a specific staff member (e.g., staff_id = 3).
             // --------------------------------------------------------------------------------
-            int staffId = 3;
+            int VstaffId = 3;
             var result2 = db.Orders
-                .Where(o => o.StaffId == staffId)
-                .ToList();
+                            .Where(o => o.StaffId == VstaffId)
+                            .ToList();
 
 
             // 3- Get all products that belong to a category named "Mountain Bikes".
