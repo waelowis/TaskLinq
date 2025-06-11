@@ -62,6 +62,9 @@ namespace TaskLinq
 
             // 7- List all products that have never been ordered (not found in order_items).
             // --------------------------------------------------------------------------------
+            var result7 = db.Products
+                            .Where(p => !db.OrderItems.Any(oi => oi.ProductId == p.ProductId))
+                            .ToList();
 
 
             // 8- Display products that have a quantity of less than 5 in any store stock.
