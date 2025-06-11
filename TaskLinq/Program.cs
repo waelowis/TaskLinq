@@ -10,27 +10,54 @@ namespace TaskLinq
 
             // 1- List all customers' first and last names along with their email addresses.
             // --------------------------------------------------------------------------------
+            var result1 = db.Customers
+                            .Select(c => new
+                            {
+                                c.FirstName,
+                                c.LastName,
+                                c.Email
+                            }).ToList();
 
 
             // 2- Retrieve all orders processed by a specific staff member (e.g., staff_id = 3).
             // --------------------------------------------------------------------------------
-            int staffid = 3;
-            var result2 = db.Orders.Where(o => o.StaffId == staffid);
+            int staffId = 3;
+            var result2 = db.Orders
+                .Where(o => o.StaffId == staffId)
+                .ToList();
+
 
             // 3- Get all products that belong to a category named "Mountain Bikes".
             // --------------------------------------------------------------------------------
+            var result3 = db.Products
+                            .Where(p => p.Category.CategoryName == "Mountain Bikes")
+                            .ToList();
 
 
             // 4- Count the total number of orders per store.
             // --------------------------------------------------------------------------------
+            var result4 = db.Orders
+                            .GroupBy(o => o.StoreId)
+                            .Select(g => new
+                            {
+                                StoreId = g.Key,
+                                OrderCount = g.Count()
+                            }).ToList();
 
 
             // 5- List all orders that have not been shipped yet (shipped_date is null).
             // --------------------------------------------------------------------------------
-            var result5 = db.Orders.Where(e => e.ShippedDate == null);
+            var result5 = db.Orders
+                            .Where(e => e.ShippedDate == null);
 
             // 6- Display each customer’s full name and the number of orders they have placed.
             // --------------------------------------------------------------------------------
+            var result6 = db.Customers
+                            .Select(c => new
+                            {
+                                FullName = c.FirstName + " " + c.LastName,
+                                OrdersCount = db.Orders.Count(o => o.CustomerId == c.CustomerId)
+                            }).ToList();
 
 
             // 7- List all products that have never been ordered (not found in order_items).
