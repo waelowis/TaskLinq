@@ -142,22 +142,53 @@ namespace TaskLinq
 
             // 16- Display each staff member’s name and how many orders they processed.
             // --------------------------------------------------------------------------------
-
+            var result16 = db.Staffs
+                             .Select(s => new
+                             {
+                                 FullName = s.FirstName + " " + s.LastName,
+                                 OrdersCount = db.Orders.Count(o => o.StaffId == s.StaffId)
+                             })
+                              .ToList();
 
             // 17- List active staff members only (active = true) along with their phone numbers.
             // --------------------------------------------------------------------------------
-
+            var result17 = db.Staffs
+                                .Where(s => s.Active == 1)
+                                .Select(s => new
+                                {
+                                    FullName = s.FirstName + " " + s.LastName,
+                                    s.Phone
+                                })
+                                .ToList();
 
             // 18- List all products with their brand name and category name.
             // --------------------------------------------------------------------------------
-
+            var result18 = db.Products
+                             .Select(p => new
+                             {
+                                 p.ProductName,
+                                 Brand = p.Brand.BrandName,
+                                 Category = p.Category.CategoryName
+                             })
+                             .ToList();
 
             // 19- Retrieve orders that are completed.
             // --------------------------------------------------------------------------------
-
+            var result19 = db.Orders
+                            .Where(o => o.OrderStatus == 4)
+                            .ToList();
 
             // 20- List each product with the total quantity sold (sum of quantity from order_items).
             // --------------------------------------------------------------------------------
+            var result20 = db.Products
+                                .Select(p => new
+                                {
+                                    p.ProductName,
+                                    TotalSold = db.OrderItems
+                                        .Where(oi => oi.ProductId == p.ProductId)
+                                        .Sum(oi => (int?)oi.Quantity) ?? 0
+                                })
+                                .ToList();
         }
     }
 }
