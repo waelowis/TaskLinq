@@ -1,4 +1,5 @@
-﻿using TaskLinq.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using TaskLinq.Data;
 
 namespace TaskLinq
 {
@@ -32,6 +33,12 @@ namespace TaskLinq
             var result3 = db.Products
                             .Where(p => p.Category.CategoryName == "Mountain Bikes")
                             .ToList();
+
+            var result31 = db.Products
+                            .Include(p => p.Category)
+                            .Where(p => p.Category.CategoryName == "Mountain Bikes")
+                            .ToList();
+
 
 
             // 4- Count the total number of orders per store.
@@ -69,6 +76,11 @@ namespace TaskLinq
 
             // 8- Display products that have a quantity of less than 5 in any store stock.
             // --------------------------------------------------------------------------------
+            var result8 = db.Stocks
+                            .Where(s => s.Quantity < 5)
+                            .Select(s => s.Product)
+                            .Distinct()
+                            .ToList();
 
 
             // 9- Retrieve the first product from the products table.
@@ -82,23 +94,51 @@ namespace TaskLinq
 
             // 11- Display each product with the number of times it was ordered.
             // --------------------------------------------------------------------------------
+            var result11 = db.OrderItems
+                .GroupBy(o => o.ProductId)
+                .Select(e => new
+                {
+                    product = e.Key,
+                    count = e.Count()
+                })
+                .OrderBy(x => x.product)
+                .ToList();
+
 
 
             // 12- Count the number of products in a specific category.
             // --------------------------------------------------------------------------------
+            string VcategoryName = "Mountain Bikes";
+
+            var result12 = db.Products
+                .Join(db.Categories,
+                      p => p.CategoryId,
+                      c => c.CategoryId,
+                      (p, c) => new { Product = p, Category = c })
+                .Count(x => x.Category.CategoryName == VcategoryName);
 
 
             // 13- Calculate the average list price of products.
             // --------------------------------------------------------------------------------
-
+            var result13 = db.Products
+                             .Average(p => p.ListPrice);
 
             // 14- Retrieve a specific product from the products table by ID.
             // --------------------------------------------------------------------------------
-
+            int VprodeuctID = 10;
+            var result14 = db.Products.Where(e => e.ProductId == VprodeuctID);
 
             // 15- List all products that were ordered with a quantity greater than 3 in any order.
             // --------------------------------------------------------------------------------
-
+            var result15 = db.Products
+                             .Join(db.OrderItems,
+                                    p => p.ProductId,
+                                    oi => oi.ProductId,
+                                    (p, oi) => new { Product = p, OrderItem = oi })
+                             .Where(x => x.OrderItem.Quantity > 3)
+                             .Select(x => x.Product)
+                             .Distinct()
+                             .ToList();
 
             // 16- Display each staff member’s name and how many orders they processed.
             // --------------------------------------------------------------------------------
